@@ -31,4 +31,20 @@ create table district ( district varchar(20), obj_bpl varchar(20), per_bpl varch
 2)
 
 
+proj2_80%.png
+proj2_UDF
+
+store filter_data INTO '/proj2_80' USING PigStorage(';');
+
+sqoop export --connect jdbc:mysql://localhost/b1 --username 'root' -P --table 'per_80' --export-dir '/proj2_80' --input-fields-terminated-by ';' -m 1
+sudo service mysqld start
+
+mysql -u root
+
+use b1
+
+create table per_80 ( district varchar(20), obj_bpl varchar(20), per_bpl varchar(20) );
+
+proj2_80%.png
+proj2_UDF
 
