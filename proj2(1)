@@ -5,11 +5,12 @@ DEFINE XPath org.apache.pig.piggybank.evaluation.xml.XPath();
 A = LOAD '/flume_import/StatewiseDistrictwisePhysicalProgress.xml' using org.apache.pig.piggybank.storage.XMLLoader
 ('row') as (x:chararray);
 
- bpl = FOREACH A GENERATE XPath(x, 'row/State_Name') AS name, XPath(x, 'row/District_Name') AS dname, XPath(x, 'row/Project_Objectives_IHHL_BPL') AS int(obj_bpl),  XPath(x, 'row/Project_Performance-IHHL_BPL') AS int(per_bpl)
+ bpl = FOREACH A GENERATE XPath(x, 'row/State_Name') AS name, XPath(x, 'row/District_Name') AS dname, XPath(x, 'row/Project_Objectives_IHHL_BPL') AS obj_bpl,  XPath(x, 'row/Project_Performance-IHHL_BPL') AS per_bpl;
 
 
-result =  FILTER bpl by obj_bpl == perf_bpl;
+result =  FILTER bpl by obj_bpl == per_bpl;
 
+final = FOREACH result generate dname, obj_bpl, per_bpl; 
 																																					
 
 STORE final INTO '/proj2' USING PigStorage(';');
@@ -28,31 +29,6 @@ create table district ( district varchar(20), obj_bpl varchar(20), per_bpl varch
 
 
 2)
-
-REGISTER '/home/acadgild/workspace/pig_udf.jar';
-
-final = FILTER bpl by per_bpl >= pig_udf.bplobjective(bpl.obj_bpl);
-
-package pig_udf;
-
-import java.io.IOException;
-import org.apache.pig.EvalFunc;
-import org.apache.pig.data.Tuple;
-
-public class bplobjective extends EvalFunc<String> {
-    public String exec(Tuple input) throws IOException {
-        try {
-            //long per_bpl = (long)input.get(1);
-            int obj_bpl = (int)input.get(0);
-            int req_bpl = (int)((80 * obj_bpl)/100);
-            //String final_bpl = Long.toString(req_bpl);
-            return Integer.toString(req_bpl);
-            }
-        catch (Exception e) {
-            throw new IOException(e);
-        }
-    }   
-}
 
 
 
