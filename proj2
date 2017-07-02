@@ -29,30 +29,5 @@ create table district ( district varchar(20), obj_bpl varchar(20), per_bpl varch
 
 2)
 
-REGISTER '/home/acadgild/workspace/pig_udf.jar';
-
-final = FILTER bpl by per_bpl >= pig_udf.bplobjective(bpl.obj_bpl);
-
-package pig_udf;
-
-import java.io.IOException;
-import org.apache.pig.EvalFunc;
-import org.apache.pig.data.Tuple;
-
-public class bplobjective extends EvalFunc<String> {
-    public String exec(Tuple input) throws IOException {
-        try {
-            //long per_bpl = (long)input.get(1);
-            int obj_bpl = (int)input.get(0);
-            int req_bpl = (int)((80 * obj_bpl)/100);
-            //String final_bpl = Long.toString(req_bpl);
-            return Integer.toString(req_bpl);
-            }
-        catch (Exception e) {
-            throw new IOException(e);
-        }
-    }   
-}
-
 
 
